@@ -26,6 +26,11 @@ function renderHub() {
         <ol class="jcard-ch">${JOURNEY.map((c, k) => `<li><a href="#/j/${c.steps[0][0]}"><span>${k + 1}</span>${c.title}</a></li>`).join('')}</ol></div>
       <a class="btn" style="background:var(--butter);color:var(--ink);width:auto;padding:0 28px;align-self:flex-start" href="#/j/st-start" data-act="jRestart">${icon('play', 16)}Start the full journey</a>
     </section>
+    <section class="flow-card" style="flex-direction:row;align-items:center;gap:20px;margin-top:20px;flex-wrap:wrap">
+      <div class="grow" style="min-width:260px"><span class="pill white flow-tag">For testers · real form</span><h2 style="margin-top:10px">Create your own profile</h2>
+        <p>Send someone this link. They pick pet owner or helper and fill in a full profile on their phone; the team sees it on the team page.</p></div>
+      <div style="display:flex;flex-direction:column;gap:8px;min-width:220px"><a class="btn" href="profile.html">${icon('user', 16)}Open the profile form</a><a class="link" href="team.html">Team: see submitted profiles</a></div>
+    </section>
     ${LIVE.on ? '' : '<div class="lbl" style="margin:32px 0 12px">Or explore one flow at a time</div>'}
     <div class="flows">
       ${FLOWS.map(f => `<section class="flow-card">

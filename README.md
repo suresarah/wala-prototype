@@ -11,6 +11,20 @@ A clickable prototype of the Wala pilot. It's built from the "Wala — warm rest
 
 It's plain HTML, CSS and JS, with no build step. Every screen has its own link, like `#/s/request` or `#/admin`.
 
+## Collect tester profiles
+
+Send testers **profile.html** (https://suresarah.github.io/wala-prototype/profile.html). They agree to a short consent note, pick "I have a pet" or "I want to help pets nearby", and fill in a full profile on their phone (about 5 minutes). The team sees every profile at **team.html**.
+
+Until Supabase is connected, profiles stay on the tester's device and they can download their answers.
+
+### Turn it on (one-time, ~10 minutes; this also turns on live multi-phone sessions)
+1. Go to https://supabase.com, sign up (free plan) and create a **New project**.
+2. Open **SQL Editor → New query**, paste everything from `supabase/profiles.sql`, put your email on the `team_members` line (add a line per teammate), and click **Run**.
+3. Open **Authentication → URL Configuration** and set **Site URL** to `https://suresarah.github.io/wala-prototype/team.html`.
+4. Open **Project Settings → API Keys**, copy the **Project URL** and the **anon / publishable** key into `config.js`, then commit and push.
+
+Testers can only add profiles; they can't read anyone else's. Team members sign in on team.html with an email link and can download everything as CSV or JSON. The raw table is also in the Supabase **Table Editor → profiles**.
+
 ## Live test sessions (end to end)
 
 On the home page, click **Start a test session**. You get a session code, plus a link and QR code for each role:
