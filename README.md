@@ -6,6 +6,8 @@ A clickable prototype of the Wala pilot. It's built from the "Wala — warm rest
 - **Circle invite by text:** Ana isn't on the app. She gets one SMS and answers by text or on a no-download web page.
 - **Becoming a neighbor helper:** apply with an ID, address and two vouches.
 - **Admin (desktop):** a neighborhood lead approves applicants, asks them for info, or declines them.
+- **Staged onboarding (exploration):** start with no account, see Elmwood, then give only what each trust ring needs, when you widen the ask (`screens-staged.js`).
+- **Neighborhood & community (exploration):** neighbor invite link, Elmwood board, give & get, pack walk, vouching, privacy, and a cold-start variant. Posting/offering is gated on ring 2, which links it to the staged flow.
 
 It's plain HTML, CSS and JS, with no build step. Every screen has its own link, like `#/s/request` or `#/admin`.
 
