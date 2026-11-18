@@ -227,7 +227,7 @@ Object.assign(SCREENS, {
           .map(([k, t, s]) => `<div class="opt ${STG.vouch === k ? 'selected' : ''}" data-k="${k}"><span class="radio"></span><div><div class="strong">${t}</div><div class="sub">${s}</div></div></div>`).join('')}
       </div>
       <div class="card pbutter"><div class="lbl">What a vouch means</div><div style="margin-top:6px;font-size:13px;line-height:1.45">You’ve met in person and would let them in your home. Elmwood neighbors see “Vouched by Sarah L.” on Dana’s profile. You can take it back anytime.</div></div>
-      <div class="foot"><button class="btn" data-act="nbVouch">${STG.vouched ? 'Saved · update' : 'Save'}</button><div class="small muted" style="text-align:center">Up to 5 vouches a month, so they keep meaning something.</div></div>
+      <div class="foot"><button class="btn" data-act="nbVouch">${STG.vouched ? 'Update' : 'Vouch for Dana'}</button><div class="small muted" style="text-align:center">Up to 5 vouches a month, so they keep meaning something.</div></div>
     </div></div>`
   },
 
@@ -282,7 +282,7 @@ const STG_ACTS = {
   stgPlan() { STG.plan = true; toast('Care plan drafted from your voice note (simulated)'); rerender(); },
   stgFinish() {
     if (STG.ring2) return go('st-home', 'back');
-    if (!STG.addr || !STG.plan) return toast(`Finish ${!STG.addr ? 'your address' : 'the care plan'} first, or tap “Not now”`);
+    if (!STG.addr || !STG.plan) return toast(`${!STG.addr ? 'Confirm your address' : 'Add the care plan'} first, or tap “Not now”`);
     STG.ring2 = true; go('st-unlocked');
   },
   nbJoin() { toast('Joined Elmwood with Bear · 1 of 2 vouches'); setTimeout(() => go('nb-board'), 800); },
