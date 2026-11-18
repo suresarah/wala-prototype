@@ -559,7 +559,8 @@ textarea.field { resize: none; min-height: 88px; background: var(--white); borde
 .pf-main { flex: 1; display: flex; flex-direction: column; gap: 16px; padding: 12px 0 24px; }
 .pf-main .h1 { font-size: 30px; }
 .pf-lead { margin: -4px 0 0; color: var(--mute); font-size: 15px; line-height: 1.45; }
-.pf-f { display: flex; flex-direction: column; gap: 8px; min-width: 0; flex: 1; }
+.pf-f { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.pf-row > .pf-f { flex: 1; }
 .pf-f .lbl i { font-style: normal; text-transform: none; letter-spacing: 0; font-weight: 500; color: var(--mute); opacity: .8; }
 .pf-f .field { font-size: 16px; background: var(--white); }
 .pf-f textarea.field { min-height: 0; }
