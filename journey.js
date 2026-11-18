@@ -176,8 +176,8 @@ const JFLOW = { id: 'journey', title: 'Full journey', steps: JIDS };
 
 // state each step expects, so jumping around (or using the arrows) still tells a consistent story
 const JENTER = {
-  'j-status': () => { if (!L('sarah').askedAt) act('sarah', { askedAt: Date.now() }); if (!L('ana').stage) act('ana', { stage: 'declined', reason: 'Away that weekend', answeredAt: Date.now() }); },
-  'st-gate': () => { if (!L('ana').stage) act('ana', { stage: 'declined', reason: 'Away that weekend', answeredAt: Date.now() }); },
+  'j-status': () => { if (!L('sarah').askedAt) act('sarah', { askedAt: Date.now() }); if (L('ana').stage !== 'declined') act('ana', { stage: 'declined', reason: 'Away that weekend', answeredAt: Date.now() }); },
+  'st-gate': () => { if (L('ana').stage !== 'declined') act('ana', { stage: 'declined', reason: 'Away that weekend', answeredAt: Date.now() }); },
   'kd-s-board': () => { KD.r2 = { id: true, addr: true }; KD.vouches = 2; STG.ring2 = true; },
   'kd-s-offer': () => { KD.r2 = { id: true, addr: true }; KD.vouches = 2; },
   'owner': () => { if (L('sarah').coveredBy !== 'Dana') act('sarah', { danaYesAt: Date.now(), coveredBy: 'Dana' }); KD.offered = true; },
@@ -192,7 +192,9 @@ const JENTER = {
 // rewind: entering an earlier step undoes what happens later in the story
 let JPREV = -1;
 function journeyEnter(id) {
-  const at = JIDS.indexOf(id), back = at >= 0 && at < JPREV, before = (k) => back && at < JIDS.indexOf(k);
+  const at = JIDS.indexOf(id), ch = (i) => (JSTEPS[i] || {}).ci ?? -1;
+  const back = at >= 0 && JPREV >= 0 && ch(at) < ch(JPREV);           // only when jumping to an earlier chapter
+  const before = (k) => back && ch(at) < ch(JIDS.indexOf(k));
   if (at >= 0) JPREV = at;
   const clear = (role, keys) => { const d = { ...L(role) }; let ch = false; keys.forEach(k => { if (k in d) { delete d[k]; ch = true; } }); if (ch) LIVE.data[role] = d; };
   if (before('decline')) clear('ana', ['stage', 'reason', 'answeredAt', 'askAgain']);
