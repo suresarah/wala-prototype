@@ -2,12 +2,15 @@
 // The live app is Danielle's (still branded "Pawtrust"); this is a prototype copy using the Kindred name.
 // Theme: .kd swaps the Wala tokens for the app's lavender ones, so shared components (card, pill, btn…) restyle themselves.
 
+// Skin: Wala by default; ?skin=kindred shows the original lavender Kindred look
+const KD_SKIN = new URLSearchParams(location.search).get('skin') === 'kindred' ? 'lav' : 'wala';
+const KB = KD_SKIN === 'lav' ? 'Kindred' : 'Wala';
 const KD = { r2: { id: false, addr: false }, vouches: 1, refSent: false, offered: false, offer: { am: true, pm: true }, pay: 'Neighbor rate · $20/visit', proStarted: false };
 
 const kdNav = (on = 'Today') => `
   <nav class="navbar">${[['house', 'Today', 'kd-s-today'], ['message', 'Messages', ''], ['calendar', 'Schedule', ''], ['money', 'Earnings', ''], ['user', 'Account', '']]
     .map(([i, n, g]) => `<a class="${n === on ? 'on' : ''}" ${g ? `data-go="${g}"` : `data-toast="${n} isn’t part of this prototype"`}><span class="ico">${icon(i, 18)}</span>${n}</a>`).join('')}</nav>`;
-const kdMark = () => `<div class="kd-mark"><span>${icon('paw', 16)}</span>Kindred</div>`;
+const kdMark = () => KD_SKIN === 'lav' ? `<div class="kd-mark"><span>${icon('paw', 16)}</span>Kindred</div>` : `<i class="logo kd-logo" aria-label="Wala"></i>`;
 const kdPet = (e, bg = 'var(--pblue)') => `<span class="kd-pet" style="background:${bg}">${e}</span>`;
 const kdStep = (ic, t, s, state = '', go = '', toastMsg = '') => `<div class="kd-step ${state} tap" ${go ? `data-go="${go}"` : `data-toast="${toastMsg || t + ' isn’t part of this prototype'}"`}><span class="kd-ic">${state === 'done' ? icon('check', 15) : icon(ic, 16)}</span><div class="grow"><div class="strong">${t}</div><div class="sub">${s}</div></div>${icon('next', 16)}</div>`;
 const kdRing = (n, title, sub, state, body = '') => `<div class="kd-ring ${state}"><div class="rowx c"><span class="kd-num">${state === 'done' ? icon('check', 14) : n}</span><div class="grow"><div class="ttl">${title}</div><div class="sub">${sub}</div></div>${state === 'done' ? pill('Open', 'pgrass sm') : state === 'now' ? pill('Next', 'peri sm') : pill('Later', 'sm')}</div>${body}</div>`;
@@ -16,7 +19,7 @@ Object.assign(SCREENS, {
 
   // ===== Flow F · Kindred sitter app, recreated as it is today =====
   'kd-welcome': {
-    name: 'Welcome', render: () => `<div class="s kd">
+    name: 'Welcome', render: () => `<div class="s kd ${KD_SKIN}">
     <div class="body">
       ${kdMark()}
       <div class="kd-hero"><img src="assets/bear.jpg" alt=""><span class="pill white sm">${icon('shield', 13)}Background-checked caregivers</span></div>
@@ -24,16 +27,16 @@ Object.assign(SCREENS, {
       <p class="muted" style="margin:8px 0 0">The caregiver app for professional pet sitters. Accept jobs, deliver great care, and grow trusted client relationships all in one place.</p>
       <div class="rowx c small" style="margin-top:14px">${['🐕', '🐈', '🐕', '🐇'].map(e => kdPet(e)).join('')}<span><b>4.9</b> · 20,000+ pets cared for</span></div>
       <div class="foot"><button class="btn" data-go="kd-role">Create your account</button><button class="btn ghost kd-outline" data-go="kd-today-new">I already have an account</button>
-      <div class="tiny muted" style="text-align:center">By continuing you agree to Kindred’s Terms of Service and Privacy Policy.</div></div>
+      <div class="tiny muted" style="text-align:center">By continuing you agree to ${KB}’s Terms of Service and Privacy Policy.</div></div>
     </div></div>`
   },
 
   'kd-role': {
-    name: 'How will you use Kindred?', render: () => `<div class="s kd">
+    name: `How will you use ${KB}?`, render: () => `<div class="s kd ${KD_SKIN}">
     ${hdr('', '', 'kd-welcome')}
     <div class="body">
       ${kdMark()}
-      <h1 class="kd-h1">How will you use Kindred?</h1>
+      <h1 class="kd-h1">How will you use ${KB}?</h1>
       <p class="muted" style="margin:6px 0 0">You can always add the other role later from your profile.</p>
       ${[['authorized', 'I’m a pet sitter', 'Offer walks, sitting, and boarding — and get booked by nearby owners.', 'kd-today-new'], ['paw', 'I’m a pet owner', 'Find trusted, background-checked care for your pets when you need it.', 'st-start'], ['heart', 'I’m helping someone I know', 'Watch a friend, family, or neighbor’s pets — no pro profile needed.', 'h-invited']]
         .map(([i, t, s, g]) => `<div class="kd-step tap" data-go="${g}"><span class="kd-ic">${icon(i, 17)}</span><div class="grow"><div class="strong">${t}</div><div class="sub">${s}</div></div>${icon('next', 16)}</div>`).join('')}
@@ -42,9 +45,9 @@ Object.assign(SCREENS, {
   },
 
   'kd-today-new': {
-    name: 'Today · new account (as is)', render: () => `<div class="s kd">
+    name: 'Today · new account (as is)', render: () => `<div class="s kd ${KD_SKIN}">
     <div class="body">
-      <div class="rowx c"><div class="grow"><div class="small muted">Welcome to Kindred</div><h1 class="kd-h1">Let’s get you booked, Taylor</h1></div>${av('TM', 'kd-av')}</div>
+      <div class="rowx c"><div class="grow"><div class="small muted">Welcome to ${KB}</div><h1 class="kd-h1">Let’s get you booked, Taylor</h1></div>${av('TM', 'kd-av')}</div>
       <p class="muted" style="margin:6px 0 0">Finish these steps and owners near you can start booking. Your upcoming visits will show up here.</p>
       <div class="kd-group">
         <div class="kd-group-h rowx c"><span class="kd-ic">${icon('sparkle', 16)}</span><div><div class="kd-h3">Get bookable</div><div class="sub">5 steps left before owners can book you.</div></div></div>
@@ -63,10 +66,10 @@ Object.assign(SCREENS, {
   },
 
   'kd-bgcheck': {
-    name: 'Background check (as is)', render: () => `<div class="s kd">
+    name: 'Background check (as is)', render: () => `<div class="s kd ${KD_SKIN}">
     ${hdr('Background check', 'Get bookable · finish later', 'kd-today-new')}
     <div class="body">
-      <p class="muted" style="margin:0">Every sitter on Kindred passes the same check before owners can book them. It’s free for you and won’t affect your credit.</p>
+      <p class="muted" style="margin:0">Every sitter on ${KB} passes the same check before owners can book them. It’s free for you and won’t affect your credit.</p>
       <div class="lbl">What we check</div>
       ${[['contact', 'Identity & SSN trace', 'Confirms who you are and finds the addresses linked to you.'], ['search', 'National criminal database', 'Searches criminal records across all 50 states.'], ['shield', 'Sex offender registry', 'Checks the national sex offender public registry.'], ['location', 'County criminal records', 'Checks each county you’ve lived in over the past 7 years.']]
         .map(([i, t, s]) => `<div class="kd-step"><span class="kd-ic">${icon(i, 16)}</span><div class="grow"><div class="strong">${t}</div><div class="sub">${s}</div></div></div>`).join('')}
@@ -76,7 +79,7 @@ Object.assign(SCREENS, {
   },
 
   'kd-today': {
-    name: 'Today · bookable (as is)', render: () => `<div class="s kd">
+    name: 'Today · bookable (as is)', render: () => `<div class="s kd ${KD_SKIN}">
     <div class="body">
       <div class="rowx c"><div class="grow"><div class="small muted">Wednesday, Nov 18</div><h1 class="kd-h1">Good afternoon, Taylor</h1></div>${av('TM', 'kd-av')}</div>
       <div class="pills"><span class="pill peri">All</span><span class="pill white">To do <b class="kd-badge">5</b></span><span class="pill white">Staying with you 1</span><span class="pill white">Today 5</span></div>
@@ -94,7 +97,7 @@ Object.assign(SCREENS, {
 
   // ===== Flow G · Sitter side, staged by ring + Elmwood =====
   'kd-s-start': {
-    name: 'Stage 0 · help pets near you', render: () => `<div class="s kd">
+    name: 'Stage 0 · help pets near you', render: () => `<div class="s kd ${KD_SKIN}">
     <div class="body">
       <div class="rowx c">${kdMark()}<span class="grow"></span>${pill('Stage 0 · no account', 'white sm')}</div>
       <h1 class="kd-h1" style="margin-top:18px;font-size:30px">Help pets near you</h1>
@@ -109,7 +112,7 @@ Object.assign(SCREENS, {
   },
 
   'kd-s-demand': {
-    name: 'Stage 0 · demand nearby', render: () => `<div class="s kd">
+    name: 'Stage 0 · demand nearby', render: () => `<div class="s kd ${KD_SKIN}">
     ${hdr('Elmwood this month', 'Near 80129', 'kd-s-start')}
     <div class="body">
       <div class="kd-group" style="padding:16px"><div class="stg-stats"><div><b>14</b><span>asks from neighbors</span></div><div><b>3</b><span>on your block</span></div><div><b>$20</b><span>typical neighbor drop-in</span></div></div></div>
@@ -130,7 +133,7 @@ Object.assign(SCREENS, {
   },
 
   'kd-s-circle': {
-    name: 'Ring 1 · people who already trust you', render: () => `<div class="s kd">
+    name: 'Ring 1 · people who already trust you', render: () => `<div class="s kd ${KD_SKIN}">
     ${hdr('Your circle', 'Ring 1 · phone number only', 'kd-s-demand')}
     <div class="body">
       <h2 class="kd-h2">Who already asks you for help?</h2>
@@ -153,7 +156,7 @@ Object.assign(SCREENS, {
         ${kdStep('people', `Get 2 vouches (${Math.min(KD.vouches, 2)} of 2)`, KD.vouches >= 2 ? 'Maya and Megan vouched' : 'Maya vouched · ask one more', KD.vouches >= 2 ? 'done' : '', 'kd-s-ring2')}
       </div>`;
       const r3body = `<div class="kd-ring-steps">${['Background check', 'Payouts', 'Services & rates', 'Availability', 'Photo & bio'].map(t => `<span class="pill white sm">${t}</span>`).join('')}</div>`;
-      return `<div class="s kd">
+      return `<div class="s kd ${KD_SKIN}">
       <div class="body">
         <div class="rowx c"><div class="grow"><div class="small muted">Wednesday, Nov 18</div><h1 class="kd-h1">Hi Taylor</h1></div>${av('TM', 'kd-av')}</div>
         <div class="lbl">Today · 2</div>
@@ -173,7 +176,7 @@ Object.assign(SCREENS, {
   'kd-s-ring2': {
     name: 'Ring 2 · become a neighbor helper', render: () => {
       const done = KD.r2.id && KD.r2.addr && KD.vouches >= 2;
-      return `<div class="s kd">
+      return `<div class="s kd ${KD_SKIN}">
       ${hdr('Help Elmwood neighbors', 'Ring 2 · about a day, mostly waiting on a vouch', 'kd-s-today')}
       <div class="body">
         <p class="muted" style="margin:0">Neighbors see you only after these three. No SSN, no credit check — that’s only for pros.</p>
@@ -187,7 +190,7 @@ Object.assign(SCREENS, {
   },
 
   'kd-s-ref': {
-    name: 'Ask for a vouch (reuses “Request a reference”)', render: () => `<div class="s kd">
+    name: 'Ask for a vouch (reuses “Request a reference”)', render: () => `<div class="s kd ${KD_SKIN}">
     ${hdr('Ask for a vouch', 'Ring 2 · one more to go', 'kd-s-ring2')}
     <div class="body">
       <p class="muted" style="margin:0">A vouch from someone who’s seen you with animals. It also counts as a reference if you go pro later.</p>
@@ -203,7 +206,7 @@ Object.assign(SCREENS, {
   },
 
   'kd-s-board': {
-    name: 'Elmwood asks · sitter view', render: () => `<div class="s kd">
+    name: 'Elmwood asks · sitter view', render: () => `<div class="s kd ${KD_SKIN}">
     ${hdr('Elmwood asks', 'Ring 2 · within 6 blocks', 'kd-s-today')}
     <div class="body">
       <div class="card kd-elm">
@@ -219,7 +222,7 @@ Object.assign(SCREENS, {
   },
 
   'kd-s-offer': {
-    name: 'Offer to help Sarah', render: () => `<div class="s kd">
+    name: 'Offer to help Sarah', render: () => `<div class="s kd ${KD_SKIN}">
     ${hdr('Help with Bear', 'Sun Nov 29 · Sarah L. · 2 blocks', 'kd-s-board')}
     <div class="body">
       <div class="lbl">Which visits?</div>
@@ -238,7 +241,7 @@ Object.assign(SCREENS, {
   },
 
   'kd-s-pro': {
-    name: 'Ring 3 · go pro when you’re ready', render: () => `<div class="s kd">
+    name: 'Ring 3 · go pro when you’re ready', render: () => `<div class="s kd ${KD_SKIN}">
     ${hdr('Go pro', 'Ring 3 · paid bookings from anyone', 'kd-s-today')}
     <div class="body">
       <div class="kd-group" style="padding:20px"><div class="kd-h2">You’re already halfway there.</div><div class="sub" style="font-size:14px;margin-top:6px">What you’ve done as a neighbor helper carries over, so owners who don’t know you yet still have a reason to book.</div></div>
@@ -279,6 +282,6 @@ const KD_ACTS = {
 document.addEventListener('DOMContentLoaded', () => Object.assign(ACTS, KD_ACTS));
 
 FLOWS.push(
-  { id: 'kindred', title: 'Kindred sitter app · as it is', tag: 'Sitter · recreated', blurb: 'A copy of the live sitter app (kindred-umber-kappa.vercel.app, still branded Pawtrust): role picker, the 5-step “Get bookable” checklist, background check and a bookable Today.', steps: ['kd-welcome', 'kd-role', 'kd-today-new', 'kd-bgcheck', 'kd-today'] },
+  { id: 'kindred', title: `${KB === 'Wala' ? 'Sitter app' : 'Kindred sitter app'} · as it is`, tag: 'Sitter · recreated', blurb: `A copy of the live sitter app (kindred-umber-kappa.vercel.app): role picker, the 5-step “Get bookable” checklist, background check and a bookable Today. ${KD_SKIN === 'lav' ? '<a class="link" style="display:inline" href="./">Switch to the Wala skin</a>' : '<a class="link" style="display:inline" href="?skin=kindred">See the original lavender skin</a>'}`, steps: ['kd-welcome', 'kd-role', 'kd-today-new', 'kd-bgcheck', 'kd-today'] },
   { id: 'kindred-staged', title: 'Sitter · staged by ring + Elmwood', tag: 'Sitter · new · exploration', blurb: 'The sitter side of the same idea: help your circle today, add ID and two vouches to answer neighbor asks, and go pro later with what you’ve built carrying over.', steps: ['kd-s-start', 'kd-s-demand', 'kd-s-circle', 'kd-s-today', 'kd-s-ring2', 'kd-s-ref', 'kd-s-board', 'kd-s-offer', 'kd-s-pro'] }
 );
