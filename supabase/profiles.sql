@@ -19,6 +19,11 @@ create table if not exists public.team_members (email text primary key);
 alter table public.profiles enable row level security;
 alter table public.team_members enable row level security;
 
+-- signed-in people can see only their own team_members row (needed by the read policies below)
+drop policy if exists "members can see themselves" on public.team_members;
+create policy "members can see themselves" on public.team_members
+  for select to authenticated using (lower(email) = lower(auth.jwt() ->> 'email'));
+
 drop policy if exists "testers can add a profile" on public.profiles;
 create policy "testers can add a profile" on public.profiles
   for insert to anon, authenticated with check (true);
