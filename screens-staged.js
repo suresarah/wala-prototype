@@ -101,12 +101,12 @@ Object.assign(SCREENS, {
       <div class="rowx c"><div class="grow"><div class="small muted">Tuesday, Nov 18</div><div class="h1">Hi Sarah</div></div>${av('S', 'pbutter')}</div>
       <button class="btn" style="margin-top:16px" data-go="st-gate">${icon('people', 18)}Ask someone to help with ${stgPet()}</button>
       <div class="card">
-        <div class="rowx c"><div class="ttl lg grow">${stgPet()}’s setup</div>${pill(STG.ring2 ? '2 of 3 rings' : '1 of 3 rings', 'pgrass sm')}</div>
+        <div class="rowx c"><div class="ttl lg grow">${stgPet()}’s setup</div>${pill(STG.ring3 ? '3 of 3 rings' : STG.ring2 ? '2 of 3 rings' : '1 of 3 rings', 'pgrass sm')}</div>
         <div class="sub">Each ring opens when you need it. Nothing here is required today.</div>
         <div class="divide" style="margin-top:12px">
           ${ringRow('done', 'Ring 1 · Your circle', 'Ready · Megan and Ana can be asked')}
           ${STG.ring2 ? ringRow('done', 'Ring 2 · Elmwood neighbors', 'Open · board, vouches, neighbor asks') : ringRow('now', 'Ring 2 · Elmwood neighbors', `${2 - STG.addr - STG.plan} thing${2 - STG.addr - STG.plan === 1 ? '' : 's'} · about 3 min`, `<button class="btn sm ghost" data-go="st-gate">Start</button>`)}
-          ${ringRow('later', 'Ring 3 · Pros', 'Payment + meds · we’ll ask when you book', '')}
+          ${STG.ring3 ? ringRow('done', 'Ring 3 · Pros', 'Payment + care profile added at your first booking') : ringRow('later', 'Ring 3 · Pros', 'Payment + meds · we’ll ask when you book', '')}
         </div>
       </div>
       <div class="lbl">Elmwood this week</div>
@@ -283,7 +283,7 @@ const STG_ACTS = {
   stgFinish() {
     if (STG.ring2) return go('st-home', 'back');
     if (!STG.addr || !STG.plan) return toast(`${!STG.addr ? 'Confirm your address' : 'Add the care plan'} first, or tap “Not now”`);
-    STG.ring2 = true; go('st-unlocked');
+    STG.ring2 = true; actOnce('sarah', 'neighborsAskedAt'); go('st-unlocked');
   },
   nbJoin() { toast('Joined Elmwood with Bear · 1 of 2 vouches'); setTimeout(() => go('nb-board'), 800); },
   nbPost() {

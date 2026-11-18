@@ -514,3 +514,35 @@ textarea.field { resize: none; min-height: 88px; background: var(--white); borde
 .kd.lav .kd-check.done { box-shadow: none; }
 .kd.lav .kd-elm { box-shadow: inset 0 0 0 2px var(--peri) !important; background: var(--white) !important; }
 .kd.lav .kd-ring.done .kd-num, .kd.lav .kd-step.done .kd-ic { background: var(--grass); color: #fff; }
+
+/* ---------- full journey ---------- */
+.jcard { background: var(--peri); color: var(--white); border-radius: 32px; padding: 28px; display: flex; flex-direction: column; gap: 18px; margin-bottom: 8px; }
+.jcard h2 { margin: 10px 0 6px; font-size: 30px; letter-spacing: -0.04em; font-weight: 600; }
+.jcard p { margin: 0; color: var(--peri-pale); max-width: 760px; font-size: 15px; }
+.jcard-ch { list-style: none; padding: 0; margin: 16px 0 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.jcard-ch a { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,.14); color: var(--white); text-decoration: none; border-radius: 999px; padding: 6px 12px 6px 6px; font-size: 13px; font-weight: 500; }
+.jcard-ch a span { width: 22px; height: 22px; border-radius: 999px; background: var(--butter); color: var(--ink); display: grid; place-items: center; font-size: 11px; font-weight: 700; }
+.jcard-ch a:hover { background: rgba(255,255,255,.24); }
+.stage.jstage { gap: 40px; align-items: flex-start; }
+.jpanel { width: 340px; flex: none; background: var(--canvas); border-radius: 28px; padding: 22px; margin-top: 8px; display: flex; flex-direction: column; max-height: calc(100vh - 100px); overflow-y: auto; }
+.jtitle { font-size: 24px; font-weight: 600; letter-spacing: -0.03em; margin: 8px 0 14px; line-height: 1.15; }
+.jwho { display: flex; gap: 10px; align-items: center; background: var(--white); border-radius: 18px; padding: 10px 12px; }
+.jnote { font-size: 15px; line-height: 1.45; margin: 14px 0 0; }
+.jbtns { display: flex; gap: 8px; margin-top: 16px; }
+.jbtns .btn { flex: 1; }
+.jch { list-style: none; padding: 0; margin: 20px 0 0; border-top: 1px solid var(--line); padding-top: 12px; display: flex; flex-direction: column; gap: 2px; }
+.jch a { display: flex; align-items: center; gap: 10px; padding: 7px 8px; border-radius: 12px; font-size: 13px; cursor: pointer; color: var(--mute); }
+.jch a:hover { background: var(--fill); }
+.jch .n { width: 22px; height: 22px; border-radius: 999px; background: var(--fill); display: grid; place-items: center; font-size: 11px; font-weight: 700; flex: none; color: var(--ink); }
+.jch li.done .n { background: var(--grass); color: var(--white); }
+.jch li.done a { color: var(--ink); }
+.jch li.on a { background: var(--pbutter); color: var(--ink); font-weight: 600; }
+.jch li.on .n { background: var(--butter); }
+.jdot { width: 20px; height: 20px; border-radius: 999px; background: var(--butter); font-size: 8px; font-weight: 700; display: grid; place-items: center; color: var(--ink); flex: none; }
+.jdot.blue { background: var(--blue); } .jdot.pbutter { background: var(--pbutter); box-shadow: inset 0 0 0 1px var(--line); }
+@media (max-width: 900px) {
+  .stage.jstage { flex-direction: column; align-items: center; gap: 16px; }
+  .jpanel { width: 100%; max-width: 440px; max-height: none; order: -1; margin-top: 0; }
+  .jpanel .jch { display: none; }
+}
+@media (max-width: 520px) { .jpanel { border-radius: 0; } }

@@ -158,7 +158,7 @@ Object.assign(SCREENS, {
       const r3body = `<div class="kd-ring-steps">${['Background check', 'Payouts', 'Services & rates', 'Availability', 'Photo & bio'].map(t => `<span class="pill white sm">${t}</span>`).join('')}</div>`;
       return `<div class="s kd ${KD_SKIN}">
       <div class="body">
-        <div class="rowx c"><div class="grow"><div class="small muted">Wednesday, Nov 18</div><h1 class="kd-h1">Hi Taylor</h1></div>${av('TM', 'kd-av')}</div>
+        <div class="rowx c"><div class="grow"><div class="small muted">Wednesday, Nov 18</div><h1 class="kd-h1">Hi Dana</h1></div>${av('DR', 'kd-av')}</div>
         <div class="lbl">Today · 2</div>
         <div class="card divide">
           ${[['🐈', 'Miso · Maya Chen', 'Morning & evening · your neighbor'], ['🐕', 'Biscuit · Jordan Ellis', 'Midday walk · your friend']].map(([e, t, s]) => `<div class="rowx c">${kdPet(e)}<div class="grow"><div class="strong">${t}</div><div class="sub">${s}</div></div><button class="btn sm" data-toast="Visits aren’t part of this prototype">Start</button></div>`).join('')}
@@ -275,7 +275,7 @@ const KD_ACTS = {
   kdOffer() {
     if (!KD.offer.am && !KD.offer.pm) return toast('Pick at least one visit');
     KD.pay = document.querySelector('#kdPay .opt.selected')?.textContent.trim() || KD.pay;
-    KD.offered = true; toast('Offer sent to Sarah'); setTimeout(() => go('kd-s-board', 'back'), 700);
+    KD.offered = true; act('sarah', { danaYesAt: Date.now(), coveredBy: 'Dana' }); toast('Offer sent to Sarah'); setTimeout(() => go('kd-s-board', 'back'), 700);
   },
   kdPro() { if (KD.proStarted) return go('kd-s-today', 'back'); KD.proStarted = true; go('kd-bgcheck'); }
 };

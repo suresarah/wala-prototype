@@ -4,7 +4,9 @@ let current = null;
 let pendingTr = 'enter';
 let hotspots = false;
 
-function flowOf(id) { return FLOWS.find(f => f.steps.includes(id)); }
+const JMODE = () => location.hash.startsWith('#/j/');
+let JLAST = null;
+function flowOf(id) { if (JMODE() && JIDS.includes(id)) return JFLOW; return FLOWS.find(f => f.steps.includes(id)) || { title: 'Side step', steps: [id] }; }
 
 function renderHub() {
   document.title = LIVE.on ? `Session ${LIVE.session} · Wala Prototype` : 'Wala Prototype';
@@ -17,6 +19,14 @@ function renderHub() {
       ${window.top === window ? `<button class="btn" style="background:var(--butter);color:var(--ink);width:auto;padding:0 24px;flex:none" data-act="newSession">${icon('play', 16)}Start a test session</button>` : `<span class="pill butter" style="color:var(--ink);flex:none">Runs from the GitHub Pages link</span>`}
     </section>`}
     ${LIVE.on ? '<div class="lbl" style="margin:32px 0 12px">Or click through any flow on your own</div>' : ''}
+    <section class="jcard">
+      <div class="grow"><span class="pill butter flow-tag" style="color:var(--ink)">End to end · 3 phones · ${JIDS.length} steps</span>
+        <h2>The full journey</h2>
+        <p>Sarah finds Wala with no account, asks her circle, and widens to Elmwood neighbors when her sister can’t help. Dana becomes a neighbor helper and covers Sunday. Thanks and a vouch follow, then Sarah’s first pro booking in December. Every onboarding step shows up only when the story needs it.</p>
+        <ol class="jcard-ch">${JOURNEY.map((c, k) => `<li><a href="#/j/${c.steps[0][0]}"><span>${k + 1}</span>${c.title}</a></li>`).join('')}</ol></div>
+      <a class="btn" style="background:var(--butter);color:var(--ink);width:auto;padding:0 28px;align-self:flex-start" href="#/j/st-start" data-act="jRestart">${icon('play', 16)}Start the full journey</a>
+    </section>
+    ${LIVE.on ? '' : '<div class="lbl" style="margin:32px 0 12px">Or explore one flow at a time</div>'}
     <div class="flows">
       ${FLOWS.map(f => `<section class="flow-card">
         ${pill(f.tag, 'white flow-tag')}
@@ -67,13 +77,13 @@ function renderViewer(id) {
   return `<div class="viewer ${hotspots ? 'show-hotspots' : ''}">
     ${LIVE.role ? roleBar(devsel) : `<div class="vbar">
       <a class="home" href="#/">${icon('back', 18)}Flows</a>
-      <div class="crumb"><b>${SCREENS[id].name}</b> <span>· ${f.title} · ${i + 1}/${f.steps.length}</span></div>
+      <div class="crumb">${JMODE() ? (JIDS.includes(id) ? journeyCrumb(id) : `<b>${SCREENS[id].name}</b> · side step`) : `<b>${SCREENS[id].name}</b> <span>· ${f.title} · ${i + 1}/${f.steps.length}</span>`}</div>
       ${devsel}
       <button class="navbtn" ${prev ? `data-go="${prev}" data-tr="back"` : 'disabled'} aria-label="Previous screen">${icon('back', 18)}</button>
       <button class="navbtn" ${next ? `data-go="${next}"` : 'disabled'} aria-label="Next screen">${icon('next', 18)}</button>
       <button class="hs" aria-pressed="${hotspots}" data-act="hotspots">Hotspots</button>
     </div>`}
-    <div class="stage">${frame}</div>
+    <div class="stage ${JMODE() ? 'jstage' : ''}">${frame}${JMODE() ? (JIDS.includes(id) ? journeyPanel(id) : `<aside class="jpanel"><div class="lbl">Side step</div><h2 class="jtitle">${SCREENS[id].name}</h2><p class="jnote">This screen isn’t on the main path. Look around, then head back.</p><div class="jbtns"><button class="btn sm" data-go="${JLAST || 'st-start'}">${icon('back', 16)}Back to the journey</button></div></aside>`) : ''}</div>
   </div>`;
 }
 
@@ -83,7 +93,8 @@ function fitDevice() {
   if (!dev || !wrap) return;
   const d = DEVICES[deviceKey];
   const barH = document.querySelector('.vbar')?.offsetHeight || 56;
-  const s = Math.min(1, (window.innerHeight - barH - 40) / d.h, (window.innerWidth - 40) / d.w);
+  const side = document.querySelector('.jpanel') && window.innerWidth > 900 ? 400 : 0;
+  const s = Math.min(1, (window.innerHeight - barH - 40) / d.h, (window.innerWidth - 40 - side) / d.w);
   dev.style.transform = `scale(${s})`;
   wrap.style.width = d.w * s + 'px'; wrap.style.height = d.h * s + 'px';
 }
@@ -122,8 +133,9 @@ function route() {
     const want = LIVE.role === 'admin' ? 'admin' : (h.startsWith('s/') && allowed(h.slice(2)) ? h : 's/' + ROLES[LIVE.role].start);
     if (want !== h) { location.replace('#/' + want); return; }
   }
-  if (h.startsWith('s/') && SCREENS[h.slice(2)]) {
+  if ((h.startsWith('s/') || h.startsWith('j/')) && SCREENS[h.slice(2)]) {
     current = h.slice(2);
+    if (h.startsWith('j/')) { if (JIDS.includes(current)) JLAST = current; JENTER[current]?.(); }
     SCREENS[current].before?.();
     app.innerHTML = renderViewer(current);
     fitDevice(); paintStatusBar();
@@ -150,7 +162,7 @@ function rerender() { // keep scroll, no animation
 function go(id, tr = 'enter') {
   if (!allowed(id)) return toast('That screen belongs to another tester');
   pendingTr = tr === 'up' ? 'enter-up' : tr === 'back' ? 'enter-back' : 'enter';
-  location.hash = '#/s/' + id;
+  location.hash = (JMODE() ? '#/j/' : '#/s/') + id;
 }
 
 let toastT;
