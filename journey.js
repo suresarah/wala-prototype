@@ -189,6 +189,23 @@ const JENTER = {
   'st-pro-gate': () => { KD.proStarted = true; STG.ring2 = true; }
 };
 
+// rewind: entering an earlier step undoes what happens later in the story
+let JPREV = -1;
+function journeyEnter(id) {
+  const at = JIDS.indexOf(id), back = at >= 0 && at < JPREV, before = (k) => back && at < JIDS.indexOf(k);
+  if (at >= 0) JPREV = at;
+  const clear = (role, keys) => { const d = { ...L(role) }; let ch = false; keys.forEach(k => { if (k in d) { delete d[k]; ch = true; } }); if (ch) LIVE.data[role] = d; };
+  if (before('decline')) clear('ana', ['stage', 'reason', 'answeredAt', 'askAgain']);
+  if (before('status')) clear('sarah', ['askedAt']);
+  if (before('st-unlocked')) { STG.ring2 = false; STG.addr = false; STG.plan = false; clear('sarah', ['neighborsAskedAt']); }
+  if (before('kd-s-board')) { KD.r2 = { id: false, addr: false }; KD.vouches = 1; KD.refSent = false; }
+  if (before('owner')) { clear('sarah', ['coveredBy', 'danaYesAt']); KD.offered = false; }
+  if (before('st-update')) { J.codeShown = false; J.updateSent = false; clear('sarah', ['danaUpdateAt']); }
+  if (before('kd-s-pro')) KD.proStarted = false;
+  if (before('st-pro-booked')) { J.pay = false; J.passport = false; J.booked = false; STG.ring3 = false; }
+  JENTER[id]?.();
+}
+
 function journeyPanel(id) {
   const i = JIDS.indexOf(id), s = JSTEPS[i], p = PEOPLE[s.who], ch = JOURNEY[s.ci];
   const prev = JIDS[i - 1], next = JIDS[i + 1];

@@ -135,7 +135,7 @@ function route() {
   }
   if ((h.startsWith('s/') || h.startsWith('j/')) && SCREENS[h.slice(2)]) {
     current = h.slice(2);
-    if (h.startsWith('j/')) { if (JIDS.includes(current)) JLAST = current; JENTER[current]?.(); }
+    if (h.startsWith('j/')) { if (JIDS.includes(current)) JLAST = current; journeyEnter(current); }
     SCREENS[current].before?.();
     app.innerHTML = renderViewer(current);
     fitDevice(); paintStatusBar();
