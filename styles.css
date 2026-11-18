@@ -513,3 +513,4 @@ textarea.field { resize: none; min-height: 88px; background: var(--white); borde
 .kd.lav .kd-check { border-radius: 18px; box-shadow: inset 0 0 0 1px var(--line); }
 .kd.lav .kd-check.done { box-shadow: none; }
 .kd.lav .kd-elm { box-shadow: inset 0 0 0 2px var(--peri) !important; background: var(--white) !important; }
+.kd.lav .kd-ring.done .kd-num, .kd.lav .kd-step.done .kd-ic { background: var(--grass); color: #fff; }
