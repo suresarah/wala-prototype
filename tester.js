@@ -79,6 +79,7 @@ const TARRIVE = {
 // copy that only makes sense to the design team
 const TCOPY = [
   [/<div class="tiny muted"[^>]*>Prototype: skips ahead[^<]*<\/div>/g, ''],
+  [/\s*\(placeholder until the insurance quote\)/g, ''],
   [/<div class="small muted"[^>]*>Amounts are placeholders[^<]*<\/div>/g, ''],
   [/This prototype’s scenario stays/g, 'For now, Wala can only book'],
   [/<div class="note rowx">.{0,80}What Sarah never had to do up front[\s\S]*?<\/div><\/div>/g, ''],
