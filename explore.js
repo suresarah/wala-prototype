@@ -4,7 +4,7 @@
 // A slim bar lets them switch phones or finish; the end page lists the screens they visited, ready to copy.
 
 const EMODE = () => /^#\/e(\/|$)/.test(location.hash);
-const REAL = () => TMODE() || EMODE();
+const REAL = () => TMODE() || EMODE() || ZMODE();
 
 const EPHONES = [
   { k: 'sarah', start: 'st-start', title: 'Sarah’s phone', what: 'Pet owner with Bear, a 9-year-old German Shepherd. Uses the Wala app to find help when she’s away.' },

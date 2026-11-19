@@ -671,3 +671,22 @@ body.tmode { -webkit-tap-highlight-color: transparent; overscroll-behavior: none
 .boot-dots i:nth-child(2) { animation-delay: .15s; } .boot-dots i:nth-child(3) { animation-delay: .3s; }
 @keyframes bootDot { 50% { opacity: 1; transform: translateY(-3px); } }
 @media (prefers-reduced-motion: reduce) { #boot mask path { animation: none; stroke-dashoffset: 0; } .boot-dots { display: none; } #boot.done .boot-logo { animation: none; } }
+
+/* ---------- zero state (#/z) ---------- */
+.screen.enter-fade { animation: fade .18s ease both; }
+.zempty { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px; padding: 26px 20px 22px; }
+.zempty .sub { max-width: 300px; }
+.zempty .btn.sm { width: auto; padding: 0 20px; margin-top: 6px; }
+.zring { width: 56px; height: 56px; background: var(--peri-pale); color: var(--peri); margin-bottom: 4px; }
+.zdash { display: flex; justify-content: center; margin-bottom: 4px; }
+.zdash span { width: 40px; height: 40px; border-radius: 50%; border: 2px dashed var(--line, #d8d2c6); display: grid; place-items: center; color: var(--mute); background: var(--canvas); margin-left: -8px; }
+.zdash span:first-child { margin-left: 0; }
+.zstart .btn { width: 100%; }
+.zlead { min-height: 100vh; }
+.zlead-top { display: flex; align-items: center; gap: 12px; padding: 14px 28px; background: var(--white); border-bottom: 1px solid var(--line); }
+.zlead-main { max-width: 1040px; margin: 0 auto; padding: 32px 28px 60px; }
+.zlead-main h1 { margin: 0; font-size: 32px; letter-spacing: -0.03em; }
+.zlead-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.zlead-empty { padding: 56px 24px; }
+.zlead-empty .sub { max-width: 440px; }
+@media (max-width: 720px) { .zlead-stats { grid-template-columns: repeat(2, 1fr); } .zlead-top, .zlead-main { padding-left: 16px; padding-right: 16px; } }

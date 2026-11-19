@@ -29,7 +29,7 @@ function renderHub() {
     <section class="flow-card" style="flex-direction:row;align-items:center;gap:20px;margin-top:20px;flex-wrap:wrap">
       <div class="grow" style="min-width:260px"><span class="pill white flow-tag">For testers · usability test</span><h2 style="margin-top:10px">Test the app like it’s real</h2>
         <p>The full journey with no prototype chrome: one task at a time, a hand-off card when the story switches phones, and timings per task at the end. On a phone, “Add to Home Screen” opens it full screen.</p></div>
-      <div style="display:flex;flex-direction:column;gap:8px;min-width:220px"><a class="btn" href="#/t">${icon('play', 16)}Open tester mode</a><button class="link" data-act="copyTry">Copy the tester link</button><a class="btn ghost" href="#/e">${icon('paw', 16)}Just click around</a><button class="link" data-act="copyExplore">Copy the click-around link</button></div>
+      <div style="display:flex;flex-direction:column;gap:8px;min-width:220px"><a class="btn" href="#/t">${icon('play', 16)}Open tester mode</a><button class="link" data-act="copyTry">Copy the tester link</button><a class="btn ghost" href="#/e">${icon('paw', 16)}Just click around</a><a class="btn ghost" href="#/z">${icon('sparkle', 16)}Zero state · day one</a><button class="link" data-act="copyExplore">Copy the click-around link</button></div>
     </section>
     <section class="flow-card" style="flex-direction:row;align-items:center;gap:20px;margin-top:20px;flex-wrap:wrap">
       <div class="grow" style="min-width:260px"><span class="pill white flow-tag">For testers · real form</span><h2 style="margin-top:10px">Create your own profile</h2>
@@ -85,7 +85,7 @@ function renderViewer(id) {
           <div class="screen ${pendingTr}" id="screen" style="top:${d.sb}px">${body}</div>
           ${d.home ? '<i class="homebar"></i>' : ''}
         </div></div>`;
-  if (T) return `<div class="viewer tmode-v">${EMODE() ? eBar() : tTaskBar(id)}<div class="stage tstage">${frame}</div></div>`;
+  if (T) return `<div class="viewer tmode-v">${ZMODE() ? zBar() : EMODE() ? eBar() : tTaskBar(id)}<div class="stage tstage">${frame}</div></div>`;
   const devsel = native ? '' : `<label class="devsel"><span class="sr">Device size</span><select id="devSel">${Object.entries(DEVICES).map(([k, v]) => `<option value="${k}" ${k === deviceKey ? 'selected' : ''}>${v.label} · ${v.w}×${v.h}</option>`).join('')}</select></label>`;
   return `<div class="viewer ${hotspots ? 'show-hotspots' : ''}">
     ${LIVE.role ? roleBar(devsel) : `<div class="vbar">
@@ -150,10 +150,12 @@ function route() {
   }
   document.body.classList.toggle('tmode', REAL());
   if (h === 'e' || h === 'e/') { current = null; app.innerHTML = renderEWelcome(); window.scrollTo(0, 0); return; }
+  if (h === 'z' || h === 'z/') { current = null; app.innerHTML = renderZPicker(); window.scrollTo(0, 0); return; }
+  if (h === 'z/z-lead') { current = null; app.innerHTML = renderZLead(); window.scrollTo(0, 0); return; }
   if (h === 'e/end') { current = null; app.innerHTML = renderEEnd(); window.scrollTo(0, 0); return; }
   if (h === 't' || h === 't/') { current = null; app.innerHTML = renderTWelcome(); window.scrollTo(0, 0); return; }
   if (h === 't/end') { current = null; app.innerHTML = renderTEnd(); window.scrollTo(0, 0); return; }
-  if ((h.startsWith('s/') || h.startsWith('j/') || h.startsWith('t/') || h.startsWith('e/')) && SCREENS[h.slice(2)]) {
+  if ((h.startsWith('s/') || h.startsWith('j/') || h.startsWith('t/') || h.startsWith('e/') || h.startsWith('z/')) && SCREENS[h.slice(2)]) {
     current = h.slice(2);
     if (h.startsWith('t/')) tEnterStep(current);
     if (h.startsWith('e/')) eEnter(current);
@@ -188,8 +190,8 @@ function go(id, tr = 'enter') {
     else if (tr !== 'back' && TOVR[current]?.go?.[id]) id = TOVR[current].go[id];
     TPEND = null;
   }
-  pendingTr = tr === 'up' ? 'enter-up' : tr === 'back' ? 'enter-back' : 'enter';
-  location.hash = (TMODE() ? '#/t/' : EMODE() ? '#/e/' : JMODE() ? '#/j/' : '#/s/') + id;
+  pendingTr = tr === 'up' ? 'enter-up' : tr === 'back' ? 'enter-back' : tr === 'fade' ? 'enter-fade' : 'enter';
+  location.hash = (TMODE() ? '#/t/' : EMODE() ? '#/e/' : ZMODE() ? '#/z/' : JMODE() ? '#/j/' : '#/s/') + id;
 }
 
 let toastT;
@@ -320,7 +322,7 @@ document.addEventListener('click', (e) => {
   const opt = e.target.closest('[data-radio] > .opt');
   if (opt) { opt.parentElement.querySelectorAll('.opt').forEach(o => o.classList.toggle('selected', o === opt)); return; }
   const tg = e.target.closest('.toggle');
-  if (tg) { tg.classList.toggle('on'); return; }
+  if (tg) { tg.classList.toggle('on'); if (tg.dataset.act && ACTS[tg.dataset.act]) ACTS[tg.dataset.act](tg, e); return; }
 
   const actEl = e.target.closest('[data-act]');
   if (actEl && ACTS[actEl.dataset.act]) { e.preventDefault(); if (!tRunAct(actEl.dataset.act, actEl, e)) ACTS[actEl.dataset.act](actEl, e); return; }

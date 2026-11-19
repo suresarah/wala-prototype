@@ -16,7 +16,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=20261119d">
+<link rel="stylesheet" href="styles.css?v=20261119e">
 </head>
 <body>
 <div id="boot" aria-hidden="true">
@@ -36,7 +36,7 @@
 <script>
 (function () { // app-launch splash: only for tester / explore links, once per page load
   var b = document.getElementById('boot');
-  if (!/^#\/(t|e)(\/|$)/.test(location.hash)) { b.remove(); return; }
+  if (!/^#\/(t|e|z)(\/|$)/.test(location.hash)) { b.remove(); return; }
   var still = matchMedia('(prefers-reduced-motion: reduce)').matches;
   setTimeout(function () { b.classList.add('done'); }, still ? 300 : 2050);
   setTimeout(function () { b.classList.add('out'); }, still ? 600 : 2600);
@@ -55,8 +55,9 @@
 <script src="screens-kindred.js?v=20261118f"></script>
 <script src="journey.js?v=20261118i"></script>
 <script src="tester.js?v=20261119d"></script>
-<script src="explore.js?v=20261119a"></script>
+<script src="zero.js?v=20261119a"></script>
+<script src="explore.js?v=20261119b"></script>
 <script src="admin.js"></script>
-<script src="app.js?v=20261119c"></script>
+<script src="app.js?v=20261119d"></script>
 </body>
 </html>
