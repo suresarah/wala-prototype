@@ -116,6 +116,7 @@ function paintStatusBar() {
   const sb = document.getElementById('sbar'), sc = document.getElementById('screen');
   if (!sb || !sc) return;
   const lock = sc.querySelector('.lock');
+  const tm = sb.querySelector('.sb-time'); if (tm) tm.style.visibility = lock ? 'hidden' : '';
   if (lock) { sc.style.top = '0px'; sb.style.background = 'transparent'; sb.style.color = '#fff'; return; }
   sc.style.top = DEVICES[deviceKey].sb + 'px';
   const top = sc.querySelector('.hdr, .msg-hdr, .urlbar') || sc.firstElementChild;
