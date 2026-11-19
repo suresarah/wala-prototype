@@ -59,7 +59,6 @@ const THAND = {
 // act values: 'id' = the action runs and its navigation goes to id · {only} = go there instead of
 // running the action · {after} = run the action, then go there a moment later
 const TOVR = {
-  'st-home': { go: { 'st-gate': 'who' } },
   'j-status': { act: { askNeighbors: { only: 'st-gate' } } },
   'st-unlocked': { go: { 'nb-board': 'kd-s-start', 'st-home': 'kd-s-start' } },
   'kd-s-ref': { act: { kdSendRef: 'kd-s-board' } },
@@ -89,6 +88,7 @@ const TCOPY = [
   [/>Simulate yes</g, '>Remind'],
   [/<div class="hint">Sent as a regular SMS[^<]*<\/div>/g, ''],
   [/ — placeholder count/g, ''],
+  [/<button class="btn" style="margin-top:16px" data-go="st-gate">/g, '<button class="btn" style="margin-top:16px" data-go="who">'],
   [/<span class="pill white sm">Stage 0 · no account<\/span>/g, ''],
   [/Ring 2 → ring 1: next/g, 'Next']
 ];
@@ -204,11 +204,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // tap feedback, a short wait on main buttons, and off-target taps (capture phase, before app.js)
 document.addEventListener('click', (e) => {
-  if (!TMODE()) return;
+  if (!REAL()) return;
   const scr = e.target.closest('#screen');
   if (!scr) return;
   const hit = e.target.closest('[data-act], [data-go], [data-toast], .chip, .opt, .toggle, .tap, input, textarea, select, a[href], button, label, .notif, .linkprev');
-  if (!hit) { const t = TLOG.tasks[JIDS[TCUR]]; if (t) { t.misses = (t.misses || 0) + 1; tSave(); } return; }
+  if (!hit) { if (EMODE()) { eMiss(); return; } const t = TLOG.tasks[JIDS[TCUR]]; if (t) { t.misses = (t.misses || 0) + 1; tSave(); } return; }
   try { navigator.vibrate?.(8); } catch (err) {}
   const btn = e.target.closest('.btn');
   if (!btn || btn.classList.contains('sm') || !(btn.dataset.go || btn.dataset.act)) return;
