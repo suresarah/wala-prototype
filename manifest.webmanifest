@@ -1,0 +1,13 @@
+{
+  "name": "Wala",
+  "short_name": "Wala",
+  "start_url": "./#/t",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#EFECE6",
+  "theme_color": "#EFECE6",
+  "icons": [
+    { "src": "assets/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "assets/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }
+  ]
+}

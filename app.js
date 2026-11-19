@@ -4,7 +4,7 @@ let current = null;
 let pendingTr = 'enter';
 let hotspots = false;
 
-const JMODE = () => location.hash.startsWith('#/j/');
+const JMODE = () => location.hash.startsWith('#/j/') || location.hash.startsWith('#/t/');
 let JLAST = null;
 function flowOf(id) { if (JMODE() && JIDS.includes(id)) return JFLOW; return FLOWS.find(f => f.steps.includes(id)) || { title: 'Side step', steps: [id] }; }
 
@@ -25,6 +25,11 @@ function renderHub() {
         <p>Sarah finds Wala with no account, asks her circle, and widens to Elmwood neighbors when her sister can’t help. Dana becomes a neighbor helper and covers Sunday. Thanks and a vouch follow, then Sarah’s first pro booking in December. Every onboarding step shows up only when the story needs it.</p>
         <ol class="jcard-ch">${JOURNEY.map((c, k) => `<li><a href="#/j/${c.steps[0][0]}"><span>${k + 1}</span>${c.title}</a></li>`).join('')}</ol></div>
       <a class="btn" style="background:var(--butter);color:var(--ink);width:auto;padding:0 28px;align-self:flex-start" href="#/j/st-start" data-act="jRestart">${icon('play', 16)}Start the full journey</a>
+    </section>
+    <section class="flow-card" style="flex-direction:row;align-items:center;gap:20px;margin-top:20px;flex-wrap:wrap">
+      <div class="grow" style="min-width:260px"><span class="pill white flow-tag">For testers · usability test</span><h2 style="margin-top:10px">Test the app like it’s real</h2>
+        <p>The full journey with no prototype chrome: one task at a time, a hand-off card when the story switches phones, and timings per task at the end. On a phone, “Add to Home Screen” opens it full screen.</p></div>
+      <div style="display:flex;flex-direction:column;gap:8px;min-width:220px"><a class="btn" href="#/t">${icon('play', 16)}Open tester mode</a><button class="link" data-act="copyTry">Copy the tester link</button></div>
     </section>
     <section class="flow-card" style="flex-direction:row;align-items:center;gap:20px;margin-top:20px;flex-wrap:wrap">
       <div class="grow" style="min-width:260px"><span class="pill white flow-tag">For testers · real form</span><h2 style="margin-top:10px">Create your own profile</h2>
@@ -69,15 +74,18 @@ function renderViewer(id) {
   const f = flowOf(id); const i = f.steps.indexOf(id);
   const prev = f.steps[i - 1], next = f.steps[i + 1];
   const native = isNative(); const d = DEVICES[deviceKey];
-  document.title = `${SCREENS[id].name} · Wala Prototype`;
+  const T = TMODE();
+  document.title = T ? 'Wala' : `${SCREENS[id].name} · Wala Prototype`;
+  const body = T ? tClean(SCREENS[id].render()) : SCREENS[id].render();
   const frame = native
-    ? `<div class="device native"><div class="screen ${pendingTr}" id="screen">${SCREENS[id].render()}</div></div>`
+    ? `<div class="device native"><div class="screen ${pendingTr}" id="screen">${body}</div></div>`
     : `<div class="dwrap" id="dwrap" style="width:${d.w}px;height:${d.h}px">
         <div class="device framed ${d.home ? 'has-home' : ''}" id="device" style="width:${d.w}px;height:${d.h}px;border-radius:${d.r}px">
-          ${d.sb ? `<div class="sbar ${d.island ? 'tall' : ''}" id="sbar" style="height:${d.sb}px"><span class="sb-time">9:41</span>${d.island ? '<i class="di"></i>' : ''}<span class="sb-r">${sbarIcons}</span></div>` : ''}
-          <div class="screen ${pendingTr}" id="screen" style="top:${d.sb}px">${SCREENS[id].render()}</div>
+          ${d.sb ? `<div class="sbar ${d.island ? 'tall' : ''}" id="sbar" style="height:${d.sb}px"><span class="sb-time ${T ? 'live' : ''}">${T ? tClock() : '9:41'}</span>${d.island ? '<i class="di"></i>' : ''}<span class="sb-r">${sbarIcons}</span></div>` : ''}
+          <div class="screen ${pendingTr}" id="screen" style="top:${d.sb}px">${body}</div>
           ${d.home ? '<i class="homebar"></i>' : ''}
         </div></div>`;
+  if (T) return `<div class="viewer tmode-v">${tTaskBar(id)}<div class="stage tstage">${frame}</div></div>`;
   const devsel = native ? '' : `<label class="devsel"><span class="sr">Device size</span><select id="devSel">${Object.entries(DEVICES).map(([k, v]) => `<option value="${k}" ${k === deviceKey ? 'selected' : ''}>${v.label} · ${v.w}×${v.h}</option>`).join('')}</select></label>`;
   return `<div class="viewer ${hotspots ? 'show-hotspots' : ''}">
     ${LIVE.role ? roleBar(devsel) : `<div class="vbar">
@@ -94,10 +102,11 @@ function renderViewer(id) {
 
 // scale the phone to fit the window, and match the status bar to the screen's top
 function fitDevice() {
+  const tb = document.getElementById('tbar'); if (tb) document.documentElement.style.setProperty('--tbar-h', tb.offsetHeight + 'px');
   const dev = document.getElementById('device'), wrap = document.getElementById('dwrap');
   if (!dev || !wrap) return;
   const d = DEVICES[deviceKey];
-  const barH = document.querySelector('.vbar')?.offsetHeight || 56;
+  const barH = document.querySelector('.vbar, .tbar')?.offsetHeight || 56;
   const side = document.querySelector('.jpanel') && window.innerWidth > 900 ? 400 : 0;
   const s = Math.min(1, (window.innerHeight - barH - 40) / d.h, (window.innerWidth - 40 - side) / d.w);
   dev.style.transform = `scale(${s})`;
@@ -138,9 +147,13 @@ function route() {
     const want = LIVE.role === 'admin' ? 'admin' : (h.startsWith('s/') && allowed(h.slice(2)) ? h : 's/' + ROLES[LIVE.role].start);
     if (want !== h) { location.replace('#/' + want); return; }
   }
-  if ((h.startsWith('s/') || h.startsWith('j/')) && SCREENS[h.slice(2)]) {
+  document.body.classList.toggle('tmode', TMODE());
+  if (h === 't' || h === 't/') { current = null; app.innerHTML = renderTWelcome(); window.scrollTo(0, 0); return; }
+  if (h === 't/end') { current = null; app.innerHTML = renderTEnd(); window.scrollTo(0, 0); return; }
+  if ((h.startsWith('s/') || h.startsWith('j/') || h.startsWith('t/')) && SCREENS[h.slice(2)]) {
     current = h.slice(2);
-    if (h.startsWith('j/')) { if (JIDS.includes(current)) JLAST = current; journeyEnter(current); }
+    if (h.startsWith('t/')) tEnterStep(current);
+    if (h.startsWith('j/') || h.startsWith('t/')) { if (JIDS.includes(current)) JLAST = current; journeyEnter(current); }
     SCREENS[current].before?.();
     app.innerHTML = renderViewer(current);
     fitDevice(); paintStatusBar();
@@ -166,13 +179,18 @@ function rerender() { // keep scroll, no animation
 
 function go(id, tr = 'enter') {
   if (!allowed(id)) return toast('That screen belongs to another tester');
+  if (TMODE()) {
+    if (TPEND && TPEND.until > Date.now()) { id = TPEND.to; tr = 'enter'; }
+    else if (tr !== 'back' && TOVR[current]?.go?.[id]) id = TOVR[current].go[id];
+    TPEND = null;
+  }
   pendingTr = tr === 'up' ? 'enter-up' : tr === 'back' ? 'enter-back' : 'enter';
-  location.hash = (JMODE() ? '#/j/' : '#/s/') + id;
+  location.hash = (TMODE() ? '#/t/' : JMODE() ? '#/j/' : '#/s/') + id;
 }
 
 let toastT;
 function toast(msg) {
-  const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('on');
+  const t = document.getElementById('toast'); t.textContent = TMODE() ? tToast(msg) : msg; t.classList.add('on');
   clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('on'), 2200);
 }
 
@@ -275,6 +293,7 @@ const ACTS = {
   copyLink(el) { copyText(roleLink(el.dataset.k), `${ROLES[el.dataset.k].name}’s link copied`); },
   copyLinks() { copyText(Object.entries(ROLES).map(([k, r]) => `${r.name}: ${roleLink(k)}`).join('\n'), 'All four links copied'); },
   copyLog() { copyText(logText(), 'Log copied'); },
+  copyTry() { copyText(location.origin + location.pathname.replace(/index\.html$/, '') + 'try/', 'Tester link copied'); },
   // admin
   admTab(el) { ADM.tab = el.dataset.k; ADM.sel = null; rerender(); },
   admSel(el) { ADM.sel = el.dataset.k; rerender(); },
@@ -299,25 +318,26 @@ document.addEventListener('click', (e) => {
   if (tg) { tg.classList.toggle('on'); return; }
 
   const actEl = e.target.closest('[data-act]');
-  if (actEl && ACTS[actEl.dataset.act]) { e.preventDefault(); ACTS[actEl.dataset.act](actEl, e); return; }
+  if (actEl && ACTS[actEl.dataset.act]) { e.preventDefault(); if (!tRunAct(actEl.dataset.act, actEl, e)) ACTS[actEl.dataset.act](actEl, e); return; }
 
   const el = e.target.closest('[data-go], [data-toast]');
   if (el) {
     e.preventDefault();
+    TPEND = null;
     if (el.dataset.toast) toast(el.dataset.toast);
     if (el.dataset.go) { const d = +(el.dataset.delay || 0); const doGo = () => go(el.dataset.go, el.dataset.tr); d ? setTimeout(doGo, d) : doGo(); }
     return;
   }
   // tap on nothing inside a screen → flash hotspots (like Figma)
   const scr = e.target.closest('#screen');
-  if (scr && !e.target.closest('input, textarea, a[href]')) { scr.classList.remove('flash'); void scr.offsetWidth; scr.classList.add('flash'); }
+  if (scr && !TMODE() && !e.target.closest('input, textarea, a[href]')) { scr.classList.remove('flash'); void scr.offsetWidth; scr.classList.add('flash'); }
 });
 
 document.addEventListener('input', (e) => {
   if (e.target.id === 'voiceText') { VOICE.text = e.target.value; const v = document.getElementById('voiceParse'); if (v) v.innerHTML = voiceParseView(VOICE.kind, e.target.value); return; } if (e.target.id === 'admQ') { ADM.q = e.target.value; const pos = e.target.selectionStart; rerender(); const q = document.getElementById('admQ'); q.focus(); q.setSelectionRange(pos, pos); } });
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') document.querySelector('.modal-bg')?.remove();
-  if (LIVE.role || !current || current === 'admin' || /input|textarea|select/i.test(e.target.tagName)) return;
+  if (LIVE.role || TMODE() || !current || current === 'admin' || /input|textarea|select/i.test(e.target.tagName)) return;
   const f = flowOf(current); const i = f.steps.indexOf(current);
   if (e.key === 'ArrowRight' && f.steps[i + 1]) go(f.steps[i + 1]);
   if (e.key === 'ArrowLeft' && f.steps[i - 1]) go(f.steps[i - 1], 'back');
