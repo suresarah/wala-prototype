@@ -88,7 +88,9 @@ const TCOPY = [
   [/See it on Sarah’s phone →/g, 'Done'],
   [/>Simulate yes</g, '>Remind'],
   [/<div class="hint">Sent as a regular SMS[^<]*<\/div>/g, ''],
-  [/ — placeholder count/g, '']
+  [/ — placeholder count/g, ''],
+  [/<span class="pill white sm">Stage 0 · no account<\/span>/g, ''],
+  [/Ring 2 → ring 1: next/g, 'Next']
 ];
 const tClean = (html) => TCOPY.reduce((h, [re, to]) => h.replace(re, to), html);
 const tToast = (msg) => String(msg)
