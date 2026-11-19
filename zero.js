@@ -214,7 +214,8 @@ function renderZPicker() {
 }
 
 function zBar() {
-  const t = ZTYPES.find(x => x.k === ZWHO) || ZTYPES[0]; const p = zPerson(t.who);
+  const k = { o: 'owner', h: 'helper', f: 'friend' }[(current || '').split('-')[1]] || ZWHO;
+  const t = ZTYPES.find(x => x.k === k) || ZTYPES[0]; const p = zPerson(t.who);
   return `<div class="tbar" id="tbar">
     <span class="tbar-n">${av(p.av, 's32 ' + p.cls)}</span>
     <div class="tbar-t"><div class="tbar-k">Day one</div><div class="tbar-q">${t.title}</div></div>
